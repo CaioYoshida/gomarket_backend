@@ -2,4 +2,4 @@
 
 const Routes = use('Route')
 
-Routes.post('users', 'UserController.store')
+Routes.post('users', 'UserController.store').validator('User')
