@@ -3,6 +3,12 @@
 const Product = use('App/Models/Product')
 
 class ProductController {
+  async index () {
+    const products = await Product.query().orderBy('name').fetch()
+
+    return products
+  }
+
   async show ({ params }) {
     const product = await Product.findOrFail(params.id)
 
@@ -10,16 +16,17 @@ class ProductController {
   }
 
   async store ({ request, response }) {
-    const data = request.only(['product_name', 'unit_type', 'last_price', 'last_price_location'])
+    const data = request.only(['name', 'brand', 'unit_type', 'last_price', 'last_price_location'])
 
-    const productExist = await Product.findByOrFail('product_name', data.product_name)
+    const productExist = await Product.findBy('name', data.name)
 
     if (productExist) {
       return response.status(401).send({ error: { message: 'Product already exists' } })
     }
 
     const user = await Product.create({
-      product_name: data.product_name,
+      name: data.name,
+      brand: data.brand,
       unit_type: data.unit_type,
       last_price: data.last_price,
       last_price_date: new Date(),
@@ -34,17 +41,12 @@ class ProductController {
 
   async update ({ params, request, response }) {
     const product = await Product.findOrFail(params.id)
-    const data = request.only(['product_name', 'unit_type', 'last_price', 'last_price_location'])
+    const data = request.only(['name', 'brand', 'unit_type', 'last_price', 'last_price_location'])
 
-    const productExist = await Product.findByOrFail('product_name', data.product_name)
-
-    if (productExist) {
-      return response.status(401).send({ error: { message: 'Product already exists' } })
-    }
-
-    if (productExist.best_price && productExist.best_price > productExist.last_price) {
+    if (product.best_price && product.best_price > data.last_price) {
       product.merge({
-        product_name: data.product_name,
+        name: data.name,
+        brand: data.brand,
         unit_type: data.unit_type,
         last_price: data.last_price,
         last_price_date: new Date(),
@@ -58,12 +60,17 @@ class ProductController {
     } else {
       product.merge({
         product_name: data.product_name,
+        brand: data.brand,
         unit_type: data.unit_type,
         last_price: data.last_price,
         last_price_date: new Date(),
         last_price_location: data.last_price_location
       })
+
+      await product.save()
     }
+
+    return product
   }
 
   async delete ({ params }) {
