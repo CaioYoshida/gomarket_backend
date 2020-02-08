@@ -3,8 +3,16 @@
 const Product = use('App/Models/Product')
 
 class ProductController {
-  async index () {
-    const products = await Product.query().orderBy('name').fetch()
+  async index ({ request }) {
+    const { search } = request.all()
+
+    if (search === '') {
+      const products = await Product.query().orderBy('name').fetch()
+
+      return products
+    }
+
+    const products = await Product.query().where('name', 'LIKE', '%' + search + '%').fetch()
 
     return products
   }
