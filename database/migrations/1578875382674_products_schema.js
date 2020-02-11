@@ -10,13 +10,6 @@ class ProductsSchema extends Schema {
       table.string('name', 80).notNullable()
       table.string('brand', 30)
       table.string('unit_type', 20).notNullable()
-      table.decimal('last_price')
-      table.date('last_price_date')
-      table.string('last_price_location')
-      table.decimal('best_price')
-      table.date('best_price_date')
-      table.string('best_price_location')
-      table.timestamps()
     })
   }
 
