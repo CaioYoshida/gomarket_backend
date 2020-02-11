@@ -24,7 +24,7 @@ class ProductController {
   }
 
   async store ({ request, response }) {
-    const data = request.only(['name', 'brand', 'unit_type', 'last_price', 'last_price_location'])
+    const data = request.only(['name', 'brand', 'unit_type'])
 
     const productExist = await Product.findBy('name', data.name)
 
@@ -35,48 +35,23 @@ class ProductController {
     const user = await Product.create({
       name: data.name,
       brand: data.brand,
-      unit_type: data.unit_type,
-      last_price: data.last_price,
-      last_price_date: new Date(),
-      last_price_location: data.last_price_location,
-      best_price: data.last_price,
-      best_price_date: new Date(),
-      best_price_location: data.last_price_location
+      unit_type: data.unit_type
     })
 
     return user
   }
 
-  async update ({ params, request, response }) {
+  async update ({ params, request }) {
     const product = await Product.findOrFail(params.id)
-    const data = request.only(['name', 'brand', 'unit_type', 'last_price', 'last_price_location'])
+    const data = request.only(['name', 'brand', 'unit_type'])
 
-    if (product.best_price && product.best_price > data.last_price) {
-      product.merge({
-        name: data.name,
-        brand: data.brand,
-        unit_type: data.unit_type,
-        last_price: data.last_price,
-        last_price_date: new Date(),
-        last_price_location: data.last_price_location,
-        best_price: data.last_price,
-        best_price_date: new Date(),
-        best_price_location: data.last_price_location
-      })
+    product.merge({
+      product_name: data.product_name,
+      brand: data.brand,
+      unit_type: data.unit_type
+    })
 
-      await product.save()
-    } else {
-      product.merge({
-        product_name: data.product_name,
-        brand: data.brand,
-        unit_type: data.unit_type,
-        last_price: data.last_price,
-        last_price_date: new Date(),
-        last_price_location: data.last_price_location
-      })
-
-      await product.save()
-    }
+    await product.save()
 
     return product
   }

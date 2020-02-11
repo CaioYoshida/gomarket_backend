@@ -11,9 +11,7 @@ class User {
     return {
       name: 'string|required',
       brand: 'string|required',
-      unit_type: 'string|required',
-      last_price: 'number',
-      last_price_location: 'string|required_if:last_price'
+      unit_type: 'string|required'
     }
   }
 
