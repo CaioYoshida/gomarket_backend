@@ -46,7 +46,7 @@ class ProductController {
     const data = request.only(['name', 'brand', 'unit_type'])
 
     product.merge({
-      product_name: data.product_name,
+      name: data.name,
       brand: data.brand,
       unit_type: data.unit_type
     })
