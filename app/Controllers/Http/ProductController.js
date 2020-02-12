@@ -7,7 +7,7 @@ class ProductController {
     const { search } = request.all()
 
     if (search === '') {
-      const products = await Product.query().orderBy('name').fetch()
+      const products = await Product.query().with('prices').orderBy('name').fetch()
 
       return products
     }

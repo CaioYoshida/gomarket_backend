@@ -4,7 +4,7 @@ const Model = use('Model')
 
 class Price extends Model {
   product () {
-    return this.belongsTo('App/Model/Product')
+    return this.belongsTo('App/Models/Product')
   }
 }
 
