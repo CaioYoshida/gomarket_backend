@@ -1,6 +1,5 @@
 'use strict'
 
-/** @type {import('@adonisjs/lucid/src/Schema')} */
 const Schema = use('Schema')
 
 class ListSchema extends Schema {
@@ -8,6 +7,7 @@ class ListSchema extends Schema {
     this.create('lists', (table) => {
       table.increments()
       table.date('date')
+      table.string('location')
       table.json('products')
       table.timestamps()
     })
