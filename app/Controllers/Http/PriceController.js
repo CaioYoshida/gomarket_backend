@@ -1,92 +1,60 @@
 'use strict'
 
-/** @typedef {import('@adonisjs/framework/src/Request')} Request */
-/** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
+const Price = use('App/Models/Price')
 
-/**
- * Resourceful controller for interacting with prices
- */
 class PriceController {
-  /**
-   * Show a list of all prices.
-   * GET prices
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async index ({ request, response, view }) {
+  async index ({ params }) {
+    const productId = params.products_id
+
+    const priceList = await Price.query()
+      .where('product_id', productId)
+      .orderBy('price_date', 'desc')
+      .fetch()
+
+    return priceList
   }
 
-  /**
-   * Render a form to be used for creating a new price.
-   * GET prices/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
+  async show ({ params }) {
+    const price = await Price.findOrFail(params.id)
+
+    return price
   }
 
-  /**
-   * Create/save a new price.
-   * POST prices
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async store ({ request, response }) {
+  async store ({ params, request }) {
+    const data = request.only(['price', 'location', 'date'])
+    const productId = params.products_id
+
+    const user = await Price.create({
+      product_id: productId,
+      price: data.price,
+      price_location: data.location,
+      price_date: data.date
+    })
+
+    return user
   }
 
-  /**
-   * Display a single price.
-   * GET prices/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async show ({ params, request, response, view }) {
+  async update ({ params, request }) {
+    const productId = params.products_id
+    const price = await Price.findOrFail(params.id)
+    const data = request.only(['price', 'location', 'date'])
+
+    price.merge({
+      product_id: productId,
+      price: data.price,
+      price_location: data.location,
+      price_date: data.date
+    })
+
+    await price.save()
+
+    return price
   }
 
-  /**
-   * Render a form to update an existing price.
-   * GET prices/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
-  }
+  async destroy ({ params }) {
+    const price = await Price.findOrFail(params.id)
 
-  /**
-   * Update price details.
-   * PUT or PATCH prices/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async update ({ params, request, response }) {
-  }
-
-  /**
-   * Delete a price with id.
-   * DELETE prices/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async destroy ({ params, request, response }) {
+    await price.delete()
   }
 }
 
