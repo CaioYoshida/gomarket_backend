@@ -34,3 +34,5 @@ Routes.resource('products.prices', 'PriceController').apiOnly()
       ]
     ]
   ))
+
+Routes.resource('lists', 'ListController').apiOnly()

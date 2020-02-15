@@ -18,7 +18,7 @@ class ProductController {
   }
 
   async show ({ params }) {
-    const product = await Product.findOrFail(params.id)
+    const product = await Product.query().where('id', params.id).with('prices').fetch()
 
     return product
   }
