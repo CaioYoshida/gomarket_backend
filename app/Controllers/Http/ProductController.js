@@ -7,18 +7,27 @@ class ProductController {
     const { search } = request.all()
 
     if (search === '') {
-      const products = await Product.query().with('prices').orderBy('name').fetch()
+      const products = await Product.query()
+        .with('prices')
+        .orderBy('name')
+        .fetch()
 
       return products
     }
 
-    const products = await Product.query().where('name', 'LIKE', '%' + search + '%').with('prices').orderBy('name').fetch()
+    const products = await Product.query()
+      .whereRaw('LOWER(name) LIKE ?', '%' + search.toLowerCase() + '%')
+      .with('prices').orderBy('name')
+      .fetch()
 
     return products
   }
 
   async show ({ params }) {
-    const product = await Product.query().where('id', params.id).with('prices', (qb) => qb.orderBy('price_date', 'desc')).fetch()
+    const product = await Product.query()
+      .where('id', params.id)
+      .with('prices', (qb) => qb.orderBy('price_date', 'desc'))
+      .fetch()
 
     return product
   }

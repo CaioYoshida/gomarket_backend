@@ -1,7 +1,6 @@
 'use strict'
 
 const List = use('App/Models/List')
-const Product = use('App/Models/Product')
 
 class ListController {
   async index () {
