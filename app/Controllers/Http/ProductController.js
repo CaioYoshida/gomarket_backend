@@ -12,13 +12,13 @@ class ProductController {
       return products
     }
 
-    const products = await Product.query().where('name', 'LIKE', '%' + search + '%').fetch()
+    const products = await Product.query().where('name', 'LIKE', '%' + search + '%').with('prices').orderBy('name').fetch()
 
     return products
   }
 
   async show ({ params }) {
-    const product = await Product.query().where('id', params.id).with('prices').fetch()
+    const product = await Product.query().where('id', params.id).with('prices', (qb) => qb.orderBy('price_date', 'desc')).fetch()
 
     return product
   }
